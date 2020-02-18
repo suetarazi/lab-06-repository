@@ -8,14 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SouthworthSpaghetti/lab-06-repository.git"
+
+    "url": "git+https://github.com/suetarazi/lab-06-repository.git"
   },
-  "author": "",
+  "author": "Sue Tarazi, Anthony Horton",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/SouthworthSpaghetti/lab-06-repository/issues"
+    "url": "https://github.com/suetarazi/lab-06-repository/issues"
   },
-  "homepage": "https://github.com/SouthworthSpaghetti/lab-06-repository#readme",
+  "homepage": "https://github.com/suetarazi/lab-06-repository#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",

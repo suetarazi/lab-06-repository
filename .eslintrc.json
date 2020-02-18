@@ -28,4 +28,6 @@
     "quotes": ["warn", "single", {"allowTemplateLiterals": true}],
     "semi": "error"
   }
+
 }
+
