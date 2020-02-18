@@ -25,15 +25,17 @@ app.get('/location', (request, response) => {
 })
 
 app.get('/weather', (request, response) => {
-  let city = request.query.city;
+  console.log(request.query);
+   
+  // let city = request.query.city;
   let tempData = require('./data/darksky.json');
   // let dateObj = new Date();
   // let date = dateObj.toDateString();
-  let tempObj = tempData.daily.data[0];
-  // let dataObj = [];
-  for (let i = 0; i < tempObj.length; i++) {
-    // dataObj.push(new Sky(tempData));
-  }
+  let tempObj = tempData.daily.data;
+  let dataObj = [];
+  tempObj.forEach(day => {
+    dataObj.push(new Sky(day));
+  })
   response.send(dataObj);
 })
 
@@ -45,8 +47,8 @@ function City(city, obj) {
 }
 
 function Sky(obj) {
-  this.forecast = 
-  this.time =
+  this.forecast = obj.time;
+  this.time = new Date(obj.summary).toDateString();
 }
 
 
