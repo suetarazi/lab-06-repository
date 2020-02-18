@@ -4,7 +4,7 @@ const express = require('express');
 
 const app = express();
 
-require('dotenv').config;
+require('dotenv').config();
 
 const cors = require('cors');
 app.use(cors());
@@ -12,11 +12,13 @@ app.use(cors());
 const PORT = process.env.PORT || 3001;
 
 // require('/data/darksky.json');
-
 app.get('/location', (request, response) => {
+  console.log("/./././.");
   let city = request.query.city;
+  console.log(city);
   let geoData = require('./data/geo.json');
   let dataObj = new City(city, geoData[0]);
+  console.log(dataObj);
 
 
   response.send(dataObj);
@@ -31,5 +33,5 @@ function City (city, obj){
 }
 
 app.listen(PORT, () => { 
-
+  console.log(`${PORT}`);
 })
