@@ -9,7 +9,26 @@ End time: 12:15 p.m.
 Weather feature:
 Estimate: 1 hour
 Start time: 12:55 p.m.
-End time: 
+End time: 2 p.m. (plus 2 hours - debugging!)
+
+API Keys:
+Estimate: 30 minutes
+Start time: 9:45 a.m.
+End time: 10:05 a.m.
+20 minutes
+
+API DarkSky:
+Estimate: 2 hours
+Start time: 10:15 a.m.
+End time: 11:30 a.m.
+1 hour, 15 minutes
+
+API Trails:
+Estimate: 2 hours
+Start time: 11:50 a.m.
+End time: 1:20 p.m.
+1 1/2 hours
+
 
 # Project Name
 
