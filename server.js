@@ -50,10 +50,9 @@ app.get('/weather', (request, response) => {
 
 function Weather(day){
     this.search_query = city;
-    this.forecast = obj.summary; 
+    this.forecast = day.summary; 
     this.time = new Date (day.time).toDateString(); 
 }
-
 
 app.listen(PORT, () => {
     console.log(`listening to ${PORT}`);
