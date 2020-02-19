@@ -2,6 +2,7 @@
 
 const express = require ('express');
 const app = express ();
+const superagent = require('superagent');
 require('dotenv').config();
 
 const cors = require('cors');
@@ -11,19 +12,27 @@ const PORT = process.env.PORT || 3001;
 
 
 app.get('/location', (request, response)=>{
-try{
+// try{
     let city = request.query.city;
     console.log(city);
-    let geoData = require('./data/geo.json');
-    let location = new City(city, geoData[0]);
-    console.log(location);
-    response.send(location);
+    // let geoData = require('./data/geo.json');
+    let url = `https://us1.locationiq.com/v1/search.php?key=${process.env.GEOCODE_API}&q=${city}&format=json`
+
+    superagent.get(url)
+    .then(results => {
+        console.log('results from superagent', results.body);
+        let geoData = results.body;
+        let location = new City(city, geoData[0]);
+        // console.log(location);
+        response.status(200).send(location);
+
+    })
 }
-catch(err){
-    console.log('error', err);
-    response.status(500).send(err);
-}
-})
+// catch(err){
+//     console.log('error', err);
+//     response.status(500).send(err);
+// }
+)
 
 
 function City (city, obj){
