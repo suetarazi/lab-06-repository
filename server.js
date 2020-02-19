@@ -20,7 +20,7 @@ try{
     response.send(location);
 }
 catch(err){
-    console.log(err);
+    console.log('error', err);
     response.status(500).send(err);
 }
 })
@@ -35,19 +35,34 @@ function City (city, obj){
 
 app.get('/weather', (request, response) => {
     console.log(request.query);
-    // let weather = request.query.city;
+try{
+    let weather = request.query.city;
     // console.log(weather);
-    let skyData = require ('./data/darksky.json');
+    let skyData = require('./data/darksky.json');
     let weatherObj = skyData.daily.data;
     let weatherResults = [];
     weatherObj.forEach(day => {
         weatherResults.push(new Weather(day));
     })
-    
-    
-    // console.log(forecast, time);
     response.send(weatherResults);
+}
+catch(err){
+    console.log('error', err);
+    response.status(500).send(err);
+} 
 })
+
+
+function Weather(day){
+    // this.search_query = city;
+    this.forecast = day.summary; 
+    this.time = new Date (day.time).toDateString(); 
+}
+
+app.listen(PORT, () => {
+    console.log(`listening to ${PORT}`);
+})
+
 
 // function Weather(day){
 //     this.search_query = city;
@@ -88,14 +103,3 @@ app.get('/weather', (request, response) => {
 //     // console.log(forecast, time);
 //     response.send(weatherResults);
 // })
-
-function Weather(day){
-    this.search_query = city;
-    this.forecast = day.summary; 
-
-    this.time = new Date (day.time).toDateString(); 
-}
-
-app.listen(PORT, () => {
-    console.log(`listening to ${PORT}`);
-})
