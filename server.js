@@ -40,10 +40,11 @@ try{
     // console.log(weather);
     let skyData = require('./data/darksky.json');
     let weatherObj = skyData.daily.data;
-    let weatherResults = [];
-    weatherObj.forEach(day => {
-        weatherResults.push(new Weather(day));
-    })
+    let weatherResults = weatherObj.map((day) => (new Weather(day)));
+    
+    // weatherObj.forEach(day => {
+    //     weatherResults.push(new Weather(day));
+    // })
     response.send(weatherResults);
 }
 catch(err){
