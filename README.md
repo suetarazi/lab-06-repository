@@ -1,7 +1,15 @@
 # lab-06-repository
 
+Build server, deploy to Heroku and connect to City front end
 Estimate: 3 hours
 Started at 9:10 a.m.
+End time: 12:15 p.m.
+3 hours, 5 minutes
+
+Weather feature:
+Estimate: 1 hour
+Start time: 12:55 p.m.
+End time: 
 
 # Project Name
 
