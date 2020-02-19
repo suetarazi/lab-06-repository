@@ -13,31 +13,56 @@ const PORT = process.env.PORT || 3001;
 
 // require('/data/darksky.json');
 app.get('/location', (request, response) => {
-  console.log("/./././.");
-  let city = request.query.city;
-  console.log(city);
-  let geoData = require('./data/geo.json');
-  let dataObj = new City(city, geoData[0]);
-  console.log(dataObj);
+  try {
+    console.log("/./././.");
+    let city = request.query.city;
+    console.log(city);
+    let geoData = require('./data/geo.json');
+    let dataObj = new City(city, geoData[0]);
+    console.log(dataObj);
+    response.send(dataObj);
+  } catch (err) {
+    console.log(err);
+  }
+});
 
+// app.get('/weather', (request, response) => {
+//   try {
+//     // console.log(request.query);
+//     let tempData = require('./data/darksky.json');
+//     // let dateObj = new Date();
+//     // let date = dateObj.toDateString();
+//     let tempObj = tempData.daily.data;
+//     let dataObj = tempObj.map(day => new Sky(day))
+//     // let dataObj = [];
+//     // tempObj.forEach(day => {
 
-  response.send(dataObj);
-})
+//     //   dataObj.push(new Sky(day));
+//     // });
+//     response.send(dataObj);
+//   } catch (err) {
+//     console.log(err);
+//   }
+// });
 
 app.get('/weather', (request, response) => {
-  console.log(request.query);
-  // let city = request.query.city;
-  let tempData = require('./data/darksky.json');
-  // let dateObj = new Date();
-  // let date = dateObj.toDateString();
-  let tempObj = tempData.daily.data;
-  let dataObj = [];
-  tempObj.forEach(day => {
-    dataObj.push(new Sky(day));
-  });
-  console.log(dataObj);
-  response.send(dataObj);
-})
+  try {
+    console.log(request.query);
+    // let city = request.query.city;
+    let tempData = require('./data/darksky.json');
+    // let dateObj = new Date();
+    // let date = dateObj.toDateString();
+    let tempObj = tempData.daily.data;
+    // let dataObj = [];
+    // tempObj.forEach(day => {
+    //   dataObj.push(new Sky(day));
+    // });
+    let dataObj = tempObj.map(day => new Sky(day));
+    response.send(dataObj);
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 function City(city, obj) {
   this.search_query = city;
