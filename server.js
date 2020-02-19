@@ -26,7 +26,6 @@ app.get('/location', (request, response) => {
 
 app.get('/weather', (request, response) => {
   console.log(request.query);
-   
   // let city = request.query.city;
   let tempData = require('./data/darksky.json');
   // let dateObj = new Date();
@@ -35,7 +34,8 @@ app.get('/weather', (request, response) => {
   let dataObj = [];
   tempObj.forEach(day => {
     dataObj.push(new Sky(day));
-  })
+  });
+  console.log(dataObj);
   response.send(dataObj);
 })
 
@@ -47,8 +47,8 @@ function City(city, obj) {
 }
 
 function Sky(obj) {
-  this.forecast = obj.time;
-  this.time = new Date(obj.summary).toDateString();
+  this.forecast = obj.summary;
+  this.time = new Date(obj.time).toDateString();
 }
 
 
