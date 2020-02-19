@@ -21,6 +21,7 @@ try{
 }
 catch(err){
     console.log(err);
+    response.status(500).send(err);
 }
 })
 
@@ -31,24 +32,26 @@ function City (city, obj){
     this.longitude = obj.lon;
 }
 
-app.get('/weather', request, response) => {
-    let weather = request.query.city;
-    console.log(weather);
+app.get('/weather', (request, response) => {
+    console.log(request.query);
+    // let weather = request.query.city;
+    // console.log(weather);
     let skyData = require ('./data/darksky.json');
-    let weatherObj = weather.daily[1];
+    let weatherObj = skyData.daily.data;
+    let weatherResults = [];
+    weatherObj.forEach(day => {
+        weatherResults.push(new Weather(day));
+    })
     
-    // for (const i=0; i<obj.daily.data.length; i<8){
-    // weatherObj.push(new Weather (darksky[i]));
-    }
-    console.log(forecast, time);
-    response.send(forecast, time);
-}
+    
+    // console.log(forecast, time);
+    response.send(weatherResults);
+})
 
-function Weather(city, obj){
+function Weather(day){
     this.search_query = city;
-    this.forecast = obj.daily.data[i].summary; 
-    let date = new Date (obj.daily.data[i].time);
-    this.time = date.toDateString(); 
+    this.forecast = obj.summary; 
+    this.time = new Date (day.time).toDateString(); 
 }
 
 
