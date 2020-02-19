@@ -32,3 +32,29 @@ function City (city, obj){
     this.latitude = obj.lat;
     this.longitude = obj.lon;
 }
+
+app.get('/weather', (request, response) => {
+    console.log(request.query);
+    // let weather = request.query.city;
+    // console.log(weather);
+    let skyData = require ('./data/darksky.json');
+    let weatherObj = skyData.daily.data;
+    let weatherResults = [];
+    weatherObj.forEach(day => {
+        weatherResults.push(new Weather(day));
+    })
+    
+    
+    // console.log(forecast, time);
+    response.send(weatherResults);
+})
+
+function Weather(day){
+    this.search_query = city;
+    this.forecast = obj.summary; 
+    this.time = new Date (day.time).toDateString(); 
+}
+
+app.listen(PORT, () => {
+    console.log(`listening to ${PORT}`);
+})
