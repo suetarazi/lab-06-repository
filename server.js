@@ -16,14 +16,13 @@ const DARKSKY_API_KEY = process.env.DARKSKY;
 const YELP_API_KEY = process.env.YELP;
 const THEMOVIEDB_API_KEY = process.env.THEMOVIEDB;
 const EVENTFUL_API_KEY = process.env.EVENTFUL;
+const TRAILS_API_KEY = process.env.TRAILS;
 
 app.get('/location', locationHandler);
 app.get('/weather', weatherHandler);
 app.get('/events', partyHandler);
+app.get('/trails', hikeHandler);
 // app.get('/location', locationHandler);
-// app.get('/location', locationHandler);
-
-let mapCoordinates = "";
 
 function locationHandler(request, response) {
   // console.log(request.query);
@@ -62,22 +61,37 @@ function weatherHandler(request, response) {
 }
 
 function partyHandler(request, response) {
-  console.log(request.query);
+  // console.log(request.query);
   let reqData = request.query;
   // // let geoData = require('./data/geo.json');
-  const url = `http://api.eventful.com/rest/events/search?app_key=${EVENTFUL_API_KEY}&where=${reqData.latitude},${reqData.longitude}&within=25`;
+  const url = `http://api.eventful.com/json/events/search?app_key=${EVENTFUL_API_KEY}&where=${reqData.latitude},${reqData.longitude}&within=25`;
   console.log(url);
 
   superagent.get(url)
     .then(eventful => {
-      const eventData = JSON.stringify(eventful.body.events);
-      console.log(eventData);
-      const dataObj = eventData.map(day => new Party(day));
+      const eventData = JSON.parse(eventful.body);
+      const dataObj = eventData.map(day => new Party(day.events.event[0]));
       response.send(dataObj);
     })
     .catch(() => {
-      console.error('There was an error', request, response);
+      // console.error('There was an error', request, response);
     });
+}
+
+function hikeHandler (request, response) {
+  let reqData = request.query;
+  const url = `https://www.hikingproject.com/data/get-trails?lat=${reqData.latitude}&lon=${reqData.longitude}&maxDistance=10&key=${TRAILS_API_KEY}`;
+
+  superagent.get(url)
+    .then(hikeful => {
+      const dataObj = hikeful.body.trails.map(trail => new Trail(trail));
+      response.send(dataObj);
+    })
+    .catch(() => {
+      console.error('error')
+    })
+  
+
 }
 
 // app.get('/weather', (request, response) => {
@@ -117,6 +131,20 @@ function Party(obj){
   this.name = obj.title;
   this.event_date = obj.start_time;
   this.summary = obj.description;
+  console.log("/././././" + this);
+}
+
+function Trail(obj){
+  this.name = obj.name;
+  this.location = obj.location;
+  this.length = obj.length;
+  this.stars = obj.stars;
+  this.star_votes = obj.starVotes;
+  this.summary = obj.summary;
+  this.trail_url = obj.url;
+  this.conditions = obj.conditionStatus;
+  this.condition_date = obj.conditionDate.slice(0, 10);
+  this.condition_time = obj.conditionDate.slice(11, 19);
 }
 
 app.listen(PORT, () => {
