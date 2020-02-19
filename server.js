@@ -27,12 +27,11 @@ app.get('/location', (request, response)=>{
         response.status(200).send(location);
 
     })
-}
-// catch(err){
-//     console.log('error', err);
-//     response.status(500).send(err);
-// }
-)
+    .catch(err =>{
+        console.error(err);
+        response.status(500).send(err);
+    })
+})
 
 
 function City (city, obj){
@@ -44,29 +43,41 @@ function City (city, obj){
 
 app.get('/weather', (request, response) => {
     console.log(request.query);
-try{
+// try{
     let weather = request.query.city;
+    console.log('request.query = ', request.query);
+    // let latitude = request.query.latitude;
+    // let longitude = request.query.longitude;
+    let {latitude, longitude} = request.query;
+    let url = `https://api.darksky.net/forecast/${process.env.DARKSKY_API}/${latitude},${longitude}`
+    
+    superagent.get(url)
+    .then(results => {
+        console.log('darksky superagent results', results.body.daily.data);
+        let darkSkyResults = results.body.daily.data;
+        let weatherResults = darkSkyResults.map((day) => (new Weather(day)));
+        response.send(weatherResults);
+    })
     // console.log(weather);
-    let skyData = require('./data/darksky.json');
-    let weatherObj = skyData.daily.data;
-    let weatherResults = weatherObj.map((day) => (new Weather(day)));
+    // // let skyData = require('./data/darksky.json');
+    // let weatherObj = skyData.daily.data;
+    // let weatherResults = weatherObj.map((day) => (new Weather(day)));
     
     // weatherObj.forEach(day => {
     //     weatherResults.push(new Weather(day));
     // })
-    response.send(weatherResults);
-}
-catch(err){
-    console.log('error', err);
-    response.status(500).send(err);
-} 
-})
+    
+    // .catch(err){
+    //     console.log('error', err);
+    //     response.status(500).send(err);
+    // }
+    })
 
 
 function Weather(day){
     // this.search_query = city;
     this.forecast = day.summary; 
-    this.time = new Date (day.time).toDateString(); 
+    this.time = new Date (day.time * 1000).toDateString(); 
 }
 
 app.listen(PORT, () => {
