@@ -1,9 +1,11 @@
 'use strict';
 
+const pg = require('pg');
+require('dotenv').config();
+
 const express = require ('express');
 const app = express ();
 const superagent = require('superagent');
-require('dotenv').config();
 
 const cors = require('cors');
 app.use(cors());
@@ -11,26 +13,47 @@ app.use(cors());
 const PORT = process.env.PORT || 3001;
 
 
+const client = new pg.Client(process.env.DATABASE_URL);
+client.on('error', err => console.error(err));
+
+
 app.get('/location', (request, response)=>{
 // try{
     let city = request.query.city;
     console.log(city);
     // let geoData = require('./data/geo.json');
-    let url = `https://us1.locationiq.com/v1/search.php?key=${process.env.GEOCODE_API}&q=${city}&format=json`
+    //SQL query:
+    let SQL = 'SELECT * FROM city WHERE search_query=$1';
+    let safeValue = [city];
+    client.query(SQL, safeValue)
+        .then(results => {
+            // console.log(results);
+            if (results.rows.length>0){
+                // console.log('it exists!');
+               response.send(results.rows[0]);
+            }else{
+                // console.log('it does not exist');
+                let url = `https://us1.locationiq.com/v1/search.php?key=${process.env.GEOCODE_API}&q=${city}&format=json`
 
-    superagent.get(url)
-    .then(results => {
-        console.log('results from superagent', results.body);
-        let geoData = results.body;
-        let location = new City(city, geoData[0]);
-        // console.log(location);
-        response.status(200).send(location);
+                superagent.get(url)
+                .then(results => {
+                    // console.log('results from superagent', results.body);
+                    let geoData = results.body;
+                    let location = new City(city, geoData[0]);
+                    // console.log(location);
+                    let SQL = 'INSERT INTO city (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4);'
+                    let insertValues = [location.search_query, location.formatted_query, location.latitude, location.longitude];
+                    client.query(SQL, insertValues);
+                    response.status(200).send(location);
 
-    })
-    .catch(err =>{
-        console.error(err);
-        response.status(500).send(err);
-    })
+                })
+                .catch(err =>{
+                    console.error(err);
+                    response.status(500).send(err);
+                })
+            }
+            
+        })
 })
 
 
@@ -42,10 +65,10 @@ function City (city, obj){
 }
 
 app.get('/weather', (request, response) => {
-    console.log(request.query);
+    // console.log(request.query);
 // try{
     let weather = request.query.city;
-    console.log('request.query = ', request.query);
+    // console.log('request.query = ', request.query);
     // let latitude = request.query.latitude;
     // let longitude = request.query.longitude;
     let {latitude, longitude} = request.query;
@@ -79,7 +102,7 @@ app.get('/trails', (request, response) =>{
 
     superagent.get(url)
     .then(results => {
-        console.log('trails superagent results', results);
+        // console.log('trails superagent results', results);
         let trailData = results.body.trails;
         let trailResults = trailData.map((data) => (new Trails(data)));
         response.send(trailResults);
@@ -103,46 +126,9 @@ function Trails(data){
   this.condition_time = data.condition_time;  
 }
 
+client.connect()
+    .then(
 app.listen(PORT, () => {
     console.log(`listening to ${PORT}`);
 })
-
-// function Weather(day){
-//     this.search_query = city;
-//     this.forecast = day.summary; 
-
-// app.get('/location', (require, Response)=>{
-// try{
-//     let city = request.query.city;
-//     let geoData = require('./data/geo.json');
-
-//     let location = new City(city, geoData[0]);
-//     Response.send(location);
-// }
-// catch(err){
-//     console.log(err);
-// }
-// })
-
-// function City (city, obj){
-//     this.search_query = city;
-//     this.formatted_query = obj.display_name;
-//     this.latitude = obj.lat;
-//     this.longitude = obj.lon;
-// }
-
-// app.get('/weather', (request, response) => {
-//     console.log(request.query);
-//     // let weather = request.query.city;
-//     // console.log(weather);
-//     let skyData = require ('./data/darksky.json');
-//     let weatherObj = skyData.daily.data;
-//     let weatherResults = [];
-//     weatherObj.forEach(day => {
-//         weatherResults.push(new Weather(day));
-//     })
-    
-    
-//     // console.log(forecast, time);
-//     response.send(weatherResults);
-// })
+    )

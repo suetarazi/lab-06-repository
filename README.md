@@ -11,6 +11,7 @@ Estimate: 1 hour
 Start time: 12:55 p.m.
 End time: 2 p.m. (plus 2 hours - debugging!)
 
+2/19/2020 - worked with Carrington Beard
 API Keys:
 Estimate: 30 minutes
 Start time: 9:45 a.m.
@@ -28,6 +29,24 @@ Estimate: 2 hours
 Start time: 11:50 a.m.
 End time: 1:20 p.m.
 1 1/2 hours
+
+2/20/2020 - Worked with Sean Lander
+Database
+Estimate: 1 hour
+Start time: 9:25 a.m.
+End time: 9:55 a.m.
+30 minutes
+
+Server:
+Estimate: 1 1/2 hours
+Start time: 10:00
+End time: 1:40 p.m.
+3 1/2 hours
+
+Deploy to Heroku:
+Estimate: 1 hour
+Start time:
+End time:
 
 
 # Project Name
