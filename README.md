@@ -40,7 +40,14 @@ End time: 9:55 a.m.
 Server:
 Estimate: 1 1/2 hours
 Start time: 10:00
-End time: 
+End time: 1:40 p.m.
+3 1/2 hours
+
+Deploy to Heroku:
+Estimate: 1 hour
+Start time:
+End time:
+
 
 # Project Name
 
