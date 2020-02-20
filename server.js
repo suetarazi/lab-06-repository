@@ -22,7 +22,7 @@ const TRAILS_API_KEY = process.env.TRAILS;
 
 app.get('/location', locationHandler);
 app.get('/weather', weatherHandler);
-app.get('/events', partyHandler);
+// app.get('/events', partyHandler);
 app.get('/trails', hikeHandler);
 // app.get('/location', locationHandler);
 
@@ -34,18 +34,21 @@ function locationHandler(request, response) {
   // console.log(url);
 
   //if//!check SQL//FEB20
-  if(!checkDatabase(city){
-  superagent.get(url)
-    .then(data => {
-      const geoData = data.body[0];
-      const dataObj = new City(city, geoData);
-      
-      response.send(dataObj);
-    })
-    .catch(() => {
-      console.error('There was an error', request, response);
-    });
-  }
+  // let dataBaseResults = checkDatabase(city);
+  // console.log("?>?>?>?>", dataBaseResults);
+  if (!checkDatabase(city)) {//results needs some sort of length check
+    console.log("/./././.");
+    superagent.get(url)
+      .then(data => {
+        const geoData = data.body[0];
+        const dataObj = new City(city, geoData);
+
+        response.send(dataObj);
+      })
+      .catch(() => {
+        console.error('There was an error on dataBaseResults');
+      });
+  } else {response.send(dataBaseResults)};
 }
 
 function weatherHandler(request, response) {
@@ -84,7 +87,7 @@ function partyHandler(request, response) {
     });
 }
 
-function hikeHandler (request, response) {
+function hikeHandler(request, response) {
   let reqData = request.query;
   const url = `https://www.hikingproject.com/data/get-trails?lat=${reqData.latitude}&lon=${reqData.longitude}&maxDistance=10&key=${TRAILS_API_KEY}`;
 
@@ -122,23 +125,25 @@ function City(city, obj) {
   this.formatted_query = obj.display_name;
   this.latitude = obj.lat;
   this.longitude = obj.lon;
-
-  insertData(this);
+  
+  this.insertData();
   //save data in database//FEB20 with prototype
 }
 
 City.prototype.insertData = function () {//FEB20 with prototype
-  let SQL = 'SELECT * FROM city WHERE search_query LIKE ($1)';
-  let safeValue = [this.search_query, this.formatted_query, this.latitude, this.longitude];
+  console.log("12345678");
+  let SQL = 'INSERT INTO city (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4)';
+  let safeValues = [this.search_query, this.formatted_query, this.latitude, this.longitude];
+  client.query(SQL, safeValues);
 }
 
 function Sky(obj) {
   // console.log("/./././." + obj.summary);
   this.forecast = obj.summary;
-  this.time = new Date(obj.time*1000).toDateString();
+  this.time = new Date(obj.time * 1000).toDateString();
 }
 
-function Party(obj){
+function Party(obj) {
   this.link = obj.venue_url;
   this.name = obj.title;
   this.event_date = obj.start_time;
@@ -146,7 +151,7 @@ function Party(obj){
   console.log("/././././" + this);
 }
 
-function Trail(obj){
+function Trail(obj) {
   this.name = obj.name;
   this.location = obj.location;
   this.length = obj.length;
@@ -163,12 +168,13 @@ app.listen(PORT, () => {
   console.log(`${PORT}`);
 })
 
-const checkDatabase = function(city){
-  let SQL =  'SELECT * FROM city WHERE search_query LIKE ($1)';
+const checkDatabase = function (city) {
+  let SQL = 'SELECT * FROM city WHERE search_query LIKE ($1)';
   let safeValue = [city];
   client.query(SQL, safeValue)
-    .then(results => {
-      return json(results.rows);
+  .then(results => {
+    console.log(results.rows.length, SQL);
+      return results.rows;
     })
     .catch()
 }
