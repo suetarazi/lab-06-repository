@@ -9,6 +9,8 @@ require('dotenv').config();
 const cors = require('cors');
 app.use(cors());
 
+const pg = require('pg');//POSTGRES
+const client = new pg.Client(process.env.DATABASE_URL);
 
 const PORT = process.env.PORT || 3001;
 const GEOCODE_API_KEY = process.env.GEOCODING;
@@ -31,15 +33,19 @@ function locationHandler(request, response) {
   const url = `https://us1.locationiq.com/v1/search.php?key=${GEOCODE_API_KEY}&q=${city}&format=json`;
   // console.log(url);
 
+  //if//!check SQL//FEB20
+  if(!checkDatabase(city){
   superagent.get(url)
     .then(data => {
       const geoData = data.body[0];
       const dataObj = new City(city, geoData);
+      
       response.send(dataObj);
     })
     .catch(() => {
       console.error('There was an error', request, response);
     });
+  }
 }
 
 function weatherHandler(request, response) {
@@ -90,8 +96,6 @@ function hikeHandler (request, response) {
     .catch(() => {
       console.error('error')
     })
-  
-
 }
 
 // app.get('/weather', (request, response) => {
@@ -118,6 +122,14 @@ function City(city, obj) {
   this.formatted_query = obj.display_name;
   this.latitude = obj.lat;
   this.longitude = obj.lon;
+
+  insertData(this);
+  //save data in database//FEB20 with prototype
+}
+
+City.prototype.insertData = function () {//FEB20 with prototype
+  let SQL = 'SELECT * FROM city WHERE search_query LIKE ($1)';
+  let safeValue = [this.search_query, this.formatted_query, this.latitude, this.longitude];
 }
 
 function Sky(obj) {
@@ -150,3 +162,15 @@ function Trail(obj){
 app.listen(PORT, () => {
   console.log(`${PORT}`);
 })
+
+const checkDatabase = function(city){
+  let SQL =  'SELECT * FROM city WHERE search_query LIKE ($1)';
+  let safeValue = [city];
+  client.query(SQL, safeValue)
+    .then(results => {
+      return json(results.rows);
+    })
+    .catch()
+}
+
+client.connect().then(app.listen(PORT, () => console.log(`listening on ${PORT}`)));
