@@ -87,12 +87,12 @@ app.get('/weather', (request, response) => {
     })
 })
 
-
 function Weather(day){
     // this.search_query = city;
     this.forecast = day.summary; 
     this.time = new Date (day.time * 1000).toDateString(); 
 }
+
 
 //build movies here:
 app.get('/movies', (request, response) => {
@@ -126,6 +126,39 @@ function Movie(data){
     this.released_on = data.release_date;
 
 };
+
+//build Yelp here:
+app.get('/yelp', handleYelp);
+function handleYelp (request, response) {
+    let city = request.query.search_query;
+    let url = `https://api.yelp.com/v3/businesses/search?location=${city}`
+    console.log(request.query);
+
+    superagent.get(url)
+        .set('Authorization', `Bearer ${process.env.YELP_API}`)
+        .then(results => {
+            console.log(results.body.businesses);
+        let dataObj = results.body.businesses.map(business => {
+            return new Yelp(business);
+        })
+
+        response.status(200).send(dataObj);
+        })    
+
+
+        .catch(err => {
+            console.error(err);
+            response.status(500).send(err);
+        })
+}
+
+function Yelp(obj) {
+    this.name = obj.name;
+    this.image_url = obj.image_url;
+    this.price = obj.price;
+    this.rating = obj.rating;
+    this.url = obj.url;
+}
 
 //build trails here: 
 app.get('/trails', (request, response) =>{
