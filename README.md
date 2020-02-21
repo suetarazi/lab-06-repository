@@ -45,8 +45,9 @@ End time: 1:40 p.m.
 
 Deploy to Heroku:
 Estimate: 1 hour
-Start time:
+Start time: 9:15 p.m.
 End time:
+
 
 
 # Project Name

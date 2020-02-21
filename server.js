@@ -94,6 +94,39 @@ function Weather(day){
     this.time = new Date (day.time * 1000).toDateString(); 
 }
 
+//build movies here:
+app.get('/movies', (request, response) => {
+    let location = request.query.search_query;
+    console.log(request.search_query);
+    let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.THEMOVIEDB_API}&language=en-US&query=${location}&page=1&include_adult=false`
+    
+    superagent.get(url)
+    .then (results => {
+        console.log('movie superagent results', results.body.results);
+        let movieData = results.body.results;
+        let movieResults = movieData.map((data) => (new Movie(data)));
+        // console.log(movieResults);
+        response.status(200).send(movieResults);
+    })
+    .catch(err => {
+        console.error(err);
+        response.status(500).send(err);
+    })
+})
+
+
+function Movie(data){
+    this.title = data.title;
+    this.overview = data.overview;
+    this.average_votes = data.vote_average;
+    this.total_votes = data.vote_count;
+    this.image_url = `https://image.tmdb.org/t/p/w300_and_h450_bestv2${data.backdrop_path}`
+    // this.image_url = `https://image.tmdb.org/t/p/${data.backdrop_path}` 
+    this.popularity = data.popularity;
+    this.released_on = data.release_date;
+
+};
+
 //build trails here: 
 app.get('/trails', (request, response) =>{
     // console.log('request query', results)
@@ -105,13 +138,15 @@ app.get('/trails', (request, response) =>{
         // console.log('trails superagent results', results);
         let trailData = results.body.trails;
         let trailResults = trailData.map((data) => (new Trails(data)));
-        response.send(trailResults);
+        response.status(200).send(trailResults);
     })
     .catch(err =>{
         console.error(err);
         response.status(500).send(err);
     })
 })
+
+
 
 function Trails(data){
   this.name = data.name;
