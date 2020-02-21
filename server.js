@@ -23,7 +23,7 @@ app.get('/location', (request, response)=>{
     console.log(city);
     // let geoData = require('./data/geo.json');
     //SQL query:
-    let SQL = 'SELECT * FROM city WHERE search_query=$1';
+    let SQL = 'SELECT * FROM city WHERE search_query=$1;'
     let safeValue = [city];
     client.query(SQL, safeValue)
         .then(results => {
