@@ -114,7 +114,7 @@ app.get('/movies', (request, response) => {
     })
 })
 
-
+//movie function
 function Movie(data){
     this.title = data.title;
     this.overview = data.overview;
