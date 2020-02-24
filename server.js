@@ -12,9 +12,13 @@ app.use(cors());
 
 const PORT = process.env.PORT || 3001;
 
+const client = require('./lib/client');
+const handleLocation = require('./lib/handleLocation');
+const handleWeather = require('./lib/handleWeather');
 
-const client = new pg.Client(process.env.DATABASE_URL);
-client.on('error', err => console.error(err));
+
+// const client = new pg.Client(process.env.DATABASE_URL);
+// client.on('error', err => console.error(err));
 
 
 app.get('/location', (request, response)=>{
@@ -64,34 +68,29 @@ function City (city, obj){
     this.longitude = obj.lon;
 }
 
-app.get('/weather', (request, response) => {
-    // console.log(request.query);
-// try{
-    let weather = request.query.city;
-    // console.log('request.query = ', request.query);
-    // let latitude = request.query.latitude;
-    // let longitude = request.query.longitude;
-    let {latitude, longitude} = request.query;
-    let url = `https://api.darksky.net/forecast/${process.env.DARKSKY_API}/${latitude},${longitude}`
+// app.get('/weather', (request, response) => {
+//     let weather = request.query.city;
+//     let {latitude, longitude} = request.query;
+//     let url = `https://api.darksky.net/forecast/${process.env.DARKSKY_API}/${latitude},${longitude}`
     
-    superagent.get(url)
-    .then(results => {
-        // console.log('darksky superagent results', results.body.daily.data);
-        let darkSkyResults = results.body.daily.data;
-        let weatherResults = darkSkyResults.map((day) => (new Weather(day)));
-        response.send(weatherResults);
-    })
-    .catch(err =>{
-        console.error(err);
-        response.status(500).send(err);
-    })
-})
+    // superagent.get(url)
+    // .then(results => {
+    //     // console.log('darksky superagent results', results.body.daily.data);
+    //     let darkSkyResults = results.body.daily.data;
+    //     let weatherResults = darkSkyResults.map((day) => (new Weather(day)));
+    //     response.send(weatherResults);
+    // })
+    // .catch(err =>{
+    //     console.error(err);
+    //     response.status(500).send(err);
+    // })
+// })
 
-function Weather(day){
-    // this.search_query = city;
-    this.forecast = day.summary; 
-    this.time = new Date (day.time * 1000).toDateString(); 
-}
+// function Weather(day){
+//     // this.search_query = city;
+//     this.forecast = day.summary; 
+//     this.time = new Date (day.time * 1000).toDateString(); 
+// }
 
 
 //build movies here:
