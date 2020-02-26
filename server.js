@@ -68,7 +68,8 @@ function City (city, obj){
     this.longitude = obj.lon;
 }
 
-// app.get('/weather', (request, response) => {
+app.get('/weather', handleWeather); 
+    // function handleWeather (request, response) {
 //     let weather = request.query.city;
 //     let {latitude, longitude} = request.query;
 //     let url = `https://api.darksky.net/forecast/${process.env.DARKSKY_API}/${latitude},${longitude}`
@@ -84,7 +85,7 @@ function City (city, obj){
     //     console.error(err);
     //     response.status(500).send(err);
     // })
-// })
+// }
 
 // function Weather(day){
 //     // this.search_query = city;
